@@ -1,0 +1,42 @@
+@import "helpers/bases";
+
+@import "../../burgr-btn";
+
+body {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+main {
+  padding: 10vh 10vw;
+  background-color: #6be6ea;
+  font-size: 0;
+  box-shadow: 0 0 20px rgba(#54b5b7, 0.3);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.description {
+  background-color: rgba(#fff, 0.3);
+  padding: 10px;
+  margin-bottom: 26rem;
+}
+
+.burgr-container {
+  cursor: pointer;
+  display: inline-block;
+  background-color: #fff;
+  padding: 10px;
+  &:nth-last-child(n+1) {
+    margin-right: 8px;
+  }
+}
+
+.burgr-part {
+  transition: 300ms;
+}

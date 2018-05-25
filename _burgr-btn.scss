@@ -1,26 +1,29 @@
-@import "../helpers/functions";
-@import "../helpers/math";
+@import "helpers/functions";
+@import "helpers/math";
 
 $burgr-default: (
   'width': 40px, // (px)
   'stroke': 5px, // (px)
   'space-between': 4px, // (px)
   'state': 'normal', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
-  // 'active-state': 'cross', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
+  'active-state': 'cross', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
   'hover-state': 'clasic', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
   // 'arrow-size-even': true, // true : arrows will always have same size, false: arrows will always take the maximum space they can
 ) !default;
 
-$burgrs: (
-  'clasic': ('state': 'clasic'),
-  'cross': ('state': 'cross'),
-  'left': ('state': 'arrow-left'),
-  'right': ('state': 'arrow-right'),
-  'top': ('state': 'arrow-top'),
-  'bottom': ('state': 'arrow-bottom'),
-  'vertical-points': ('state': 'vertical-points'),
-  'horizontal-points': ('state': 'horizontal-points'),
+$burgrs-default: (
+  // 'clasic':            ('state': 'clasic',            'active-state': 'cross', 'hover-state': 'normal'),
+  'cross':             ('state': 'cross',             'active-state': 'right', 'hover-state': null),
+  'left':              ('state': 'arrow-left',        'active-state': 'right', 'hover-state': null),
+  // 'right':             ('state': 'arrow-right',       'active-state': 'left', 'hover-state': null),
+  // 'top':               ('state': 'arrow-top',         'active-state': 'bottom', 'hover-state': null),
+  // 'bottom':            ('state': 'arrow-bottom',      'active-state': 'top', 'hover-state': null),
+  // 'vertical-points':   ('state': 'vertical-points',   'active-state': 'cross', 'hover-state': 'normal'),
+  // 'horizontal-points': ('state': 'horizontal-points', 'active-state': 'cross', 'hover-state': null),
 ) !default;
+
+$burgrs: () !default;
+$burgrs: map-merge($burgrs-default, $burgrs);
 
 $burgrs-cache: ();
 @each $name, $burgr in $burgrs {
@@ -33,7 +36,6 @@ $BPS: add-bp-vars($burgrs);
 
 .burgr {
   position: relative;
-  background-color: #999;
   .burgr-part {
     position: absolute;
     background-color: #333;
@@ -245,8 +247,8 @@ $BPS: add-bp-vars($burgrs);
           }
         }
         @if thisbp('active-state') {
-          &:hover:active {
-            @extend %#{if(index($states, thisbp('active-state')), #{thisbp('active-state') + $id}, #{'normal' + $id})};
+          &.active {
+            @extend %#{if(index($states, thisbp('active-state')), #{thisbp('active-state') + $id}, #{thisbp('active-state') + $id})};
           }
         }
         .burgr-part {
