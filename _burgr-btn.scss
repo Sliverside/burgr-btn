@@ -1,0 +1,268 @@
+@import "../helpers/functions";
+@import "../helpers/math";
+
+$burgr-default: (
+  'width': 40px, // (px)
+  'stroke': 5px, // (px)
+  'space-between': 4px, // (px)
+  'state': 'normal', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
+  // 'active-state': 'cross', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
+  'hover-state': 'clasic', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
+  // 'arrow-size-even': true, // true : arrows will always have same size, false: arrows will always take the maximum space they can
+) !default;
+
+$burgrs: (
+  'clasic': ('state': 'clasic'),
+  'cross': ('state': 'cross'),
+  'left': ('state': 'arrow-left'),
+  'right': ('state': 'arrow-right'),
+  'top': ('state': 'arrow-top'),
+  'bottom': ('state': 'arrow-bottom'),
+  'vertical-points': ('state': 'vertical-points'),
+  'horizontal-points': ('state': 'horizontal-points'),
+) !default;
+
+$burgrs-cache: ();
+@each $name, $burgr in $burgrs {
+  $burgrs-cache: S($burgrs-cache, $name, map-merge($burgr-default, $burgr));
+}
+
+$burgrs: map-merge(('#name#': 'burgrs', '#default#' : $burgr-default), $burgrs-cache);
+
+$BPS: add-bp-vars($burgrs);
+
+.burgr {
+  position: relative;
+  background-color: #999;
+  .burgr-part {
+    position: absolute;
+    background-color: #333;
+  }
+}
+
+@each $name, $burgr in G($BPS, 'burgrs') {
+  $this: $burgr !global;
+  $id: if($name == "#default#", 'default', $name);
+  $name: if($name == "#default#", '.burgr', '.burgr.burgr-' + $name);
+  $states: ('normal', 'clasic', 'cross', 'arrow-left', 'arrow-right', 'arrow-top', 'arrow-bottom', 'vertical-points', 'horizontal-points');
+
+  #{$name} {
+    @each $bp in $burgr {
+      $this: get($bp, 'breakpoint') !global;
+      @include BPS(this('max'), this('min')) {
+        $this: $bp !global;
+        $height: thisbp('stroke')*3 + thisbp('space-between')*2;
+        $diagonale: 0px !global;
+        @if thisbp('width') {
+          @if thisbp(('stroke', 'space-between'), true) {
+            @if thisbp('width') < $height {
+              $diagonale: thisbp('width')*sqrt(2) - thisbp('stroke') !global;
+            }@else {
+              $diagonale: $height*sqrt(2) - thisbp('stroke') !global;
+            }
+          }
+          width: thisbp('width');
+        }
+
+        @at-root %clasic#{$id} {
+          .burgr-part {
+            &:nth-child(1),
+            &:nth-child(2),
+            &:nth-child(3) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY(0) rotate(0deg);
+              width: thisbp('width');
+              opacity: 1;
+            }
+          }
+        }
+
+        @at-root %normal#{$id} {
+          .burgr-part {
+            &:nth-child(1),
+            &:nth-child(2),
+            &:nth-child(3) {
+              opacity: 1;
+            }
+            &:nth-child(1) {
+              transform: scaleX(1) scaleY(1) translateX(calc(-50% - #{thisbp('width')*0.1/2})) translateY(0) rotate(0deg);
+              width: thisbp('width')*0.9;
+            }
+            &:nth-child(2) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY(0) rotate(0deg);
+              width: thisbp('width');
+            }
+            &:nth-child(3) {
+              transform: scaleX(1) scaleY(1) translateX(calc(-50% - #{thisbp('width')*0.2/2})) translateY(0) rotate(0deg);
+              width: thisbp('width')*0.8;
+            }
+          }
+        }
+
+        @at-root %cross#{$id} {
+          .burgr-part {
+            &:nth-child(1) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY(thisbp('stroke') + thisbp('space-between')) rotate(45deg);
+              width: $diagonale;
+            }
+            &:nth-child(2) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY(0) rotate(-45deg);
+              width: $diagonale;
+            }
+            &:nth-child(3) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY(thisbp('stroke')) rotate(0deg);
+              opacity: 0;
+              pointer-events: none;
+            }
+          }
+        }
+
+        @at-root %vertical-points#{$id} {
+          .burgr-part {
+            &:nth-child(1),
+            &:nth-child(2),
+            &:nth-child(3) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY(0) rotate(0deg);
+              width: thisbp('stroke');
+              opacity: 1;
+            }
+          }
+        }
+
+        @at-root %horizontal-points#{$id} {
+          .burgr-part {
+            &:nth-child(1),
+            &:nth-child(2),
+            &:nth-child(3) {
+              width: thisbp('stroke');
+              opacity: 1;
+            }
+            &:nth-child(1) {
+              transform: scaleX(1) scaleY(1) translateX(calc(-50% - #{thisbp('space-between') + thisbp('stroke')})) translateY(thisbp('space-between') + thisbp('stroke')) rotate(0deg);
+            }
+            &:nth-child(2) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY(0) rotate(0deg);
+            }
+            &:nth-child(3) {
+              transform: scaleX(1) scaleY(1) translateX(calc(-50% + #{thisbp('space-between') + thisbp('stroke')})) translateY(-(thisbp('space-between') + thisbp('stroke'))) rotate(0deg);
+            }
+          }
+        }
+
+        $arrow-diag-h: $diagonale;
+        @if $diagonale/sqrt(2) > $height/2 {
+          $arrow-diag-h: $height/2*sqrt(2);
+        }
+
+        $arrow-diag-v: $diagonale;
+        @if $diagonale/sqrt(2) > thisbp('width')/2 {
+          $arrow-diag-v: thisbp('width')/2*sqrt(2);
+        }
+        @if thisbp('arrow-size-even') == null or thisbp('arrow-size-even') == true {
+          @if $arrow-diag-h > $arrow-diag-v {
+            $arrow-diag-h: $arrow-diag-v;
+          }@else {
+            $arrow-diag-v: $arrow-diag-h;
+          }
+        }
+
+        @at-root %arrow-left#{$id} {
+          .burgr-part {
+            &:nth-child(1) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY($arrow-diag-h/2/sqrt(2) + thisbp('stroke')/2/sqrt(2) - (thisbp('stroke')*0.5)) rotate(-45deg);
+              width: $arrow-diag-h;
+            }
+            &:nth-child(2) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY($arrow-diag-h/2/sqrt(2) - thisbp('stroke')/2/sqrt(2)) rotate(45deg);
+              width: $arrow-diag-h;
+            }
+            &:nth-child(3) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY(thisbp('stroke')) rotate(0);
+              opacity: 0;
+              pointer-events: none;
+            }
+          }
+        }
+
+        @at-root %arrow-right#{$id} {
+          .burgr-part {
+            &:nth-child(1) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY($arrow-diag-h/2/sqrt(2) + thisbp('stroke')/2/sqrt(2) - (thisbp('stroke')*0.5)) rotate(45deg);
+              width: $arrow-diag-h;
+            }
+            &:nth-child(2) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY($arrow-diag-h/2/sqrt(2) - thisbp('stroke')/2/sqrt(2)) rotate(-45deg);
+              width: $arrow-diag-h;
+            }
+            &:nth-child(3) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY(thisbp('stroke')) rotate(0);
+              opacity: 0;
+              pointer-events: none;
+            }
+          }
+        }
+
+        @at-root %arrow-top#{$id} {
+          .burgr-part {
+            &:nth-child(1) {
+              transform: scaleX(1) scaleY(1) translateX(calc(-50% + #{$arrow-diag-v/4*sqrt(2) - thisbp('stroke')/4*sqrt(2)})) translateY($height/2 - thisbp('stroke')/2) rotate(45deg);
+              width: $arrow-diag-v;
+            }
+            &:nth-child(2) {
+              transform: scaleX(1) scaleY(1) translateX(calc(-50% - #{$arrow-diag-v/4*sqrt(2) - thisbp('stroke')/4*sqrt(2)})) translateY(0) rotate(-45deg);
+              width: $arrow-diag-v;
+            }
+            &:nth-child(3) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY(thisbp('stroke')) rotate(0);
+              opacity: 0;
+              pointer-events: none;
+            }
+          }
+        }
+
+        @at-root %arrow-bottom#{$id} {
+          .burgr-part {
+            &:nth-child(1) {
+              transform: scaleX(1) scaleY(1) translateX(calc(-50% + #{$arrow-diag-v/4*sqrt(2) - thisbp('stroke')/4*sqrt(2)})) translateY($height/2 - thisbp('stroke')/2) rotate(-45deg);
+              width: $arrow-diag-v;
+            }
+            &:nth-child(2) {
+              transform: scaleX(1) scaleY(1) translateX(calc(-50% - #{$arrow-diag-v/4*sqrt(2) - thisbp('stroke')/4*sqrt(2)})) translateY(0) rotate(45deg);
+              width: $arrow-diag-v;
+            }
+            &:nth-child(3) {
+              transform: scaleX(1) scaleY(1) translateX(-50%) translateY(thisbp('stroke')) rotate(0);
+              opacity: 0;
+              pointer-events: none;
+            }
+          }
+        }
+
+        @if thisbp(('stroke', 'space-between')) {height: $height;}
+        @extend %#{if(thisbp('state') and index($states, thisbp('state')), #{thisbp('state') + $id}, 'normal' + $id)};
+        @if thisbp('hover-state') {
+          &:hover {
+            @extend %#{thisbp('hover-state') + $id};
+          }
+        }
+        @if thisbp('active-state') {
+          &:hover:active {
+            @extend %#{if(index($states, thisbp('active-state')), #{thisbp('active-state') + $id}, #{'normal' + $id})};
+          }
+        }
+        .burgr-part {
+          transition: 300ms;
+          left: thisbp('width')/2;
+          opacity: 1;
+          @if thisbp('stroke') {height: thisbp('stroke');}
+          @if thisbp('width') {width: thisbp('width');}
+          &:nth-child(2) {
+            @if thisbp('space-between', 'stroke') {top: thisbp('stroke') + thisbp('space-between');}
+          }
+          &:nth-child(3) {
+            @if thisbp('space-between', 'stroke') {top: thisbp('stroke')*2 + thisbp('space-between')*2;}
+          }
+        }
+      }
+    }
+  }
+}

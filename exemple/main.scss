@@ -1,0 +1,19 @@
+
+
+@import "../burgr-btn";
+
+body {
+  overflow-x: hidden;
+}
+
+.burgr-container {
+  cursor: pointer;
+  display: inline-block;
+  background-color: #999;
+  padding: 10px;
+  margin-right: 100vw;
+}
+
+.burgr-part {
+  transition: 300ms;
+}
