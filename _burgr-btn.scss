@@ -12,14 +12,14 @@ $burgr-default: (
 ) !default;
 
 $burgrs-default: (
-  // 'clasic':            ('state': 'clasic',            'active-state': 'cross', 'hover-state': 'normal'),
-  'cross':             ('state': 'cross',             'active-state': 'right', 'hover-state': null),
-  'left':              ('state': 'arrow-left',        'active-state': 'right', 'hover-state': null),
-  // 'right':             ('state': 'arrow-right',       'active-state': 'left', 'hover-state': null),
-  // 'top':               ('state': 'arrow-top',         'active-state': 'bottom', 'hover-state': null),
-  // 'bottom':            ('state': 'arrow-bottom',      'active-state': 'top', 'hover-state': null),
-  // 'vertical-points':   ('state': 'vertical-points',   'active-state': 'cross', 'hover-state': 'normal'),
-  // 'horizontal-points': ('state': 'horizontal-points', 'active-state': 'cross', 'hover-state': null),
+  'clasic':            ('state': 'clasic',            'active-state': 'cross', 'hover-state': 'normal'),
+  'cross':             ('state': 'cross',             'active-state': 'arrow-right', 'hover-state': null),
+  'left':              ('state': 'arrow-left',        'active-state': 'arrow-right', 'hover-state': null),
+  'right':             ('state': 'arrow-right',       'active-state': 'arrow-left', 'hover-state': null),
+  'top':               ('state': 'arrow-top',         'active-state': 'arrow-bottom', 'hover-state': null),
+  'bottom':            ('state': 'arrow-bottom',      'active-state': 'arrow-top', 'hover-state': null),
+  'vertical-points':   ('state': 'vertical-points',   'active-state': 'cross', 'hover-state': 'normal'),
+  'horizontal-points': ('state': 'horizontal-points', 'active-state': 'cross', 'hover-state': null),
 ) !default;
 
 $burgrs: () !default;
@@ -243,7 +243,7 @@ $BPS: add-bp-vars($burgrs);
         @extend %#{if(thisbp('state') and index($states, thisbp('state')), #{thisbp('state') + $id}, 'normal' + $id)};
         @if thisbp('hover-state') {
           &:hover {
-            @extend %#{thisbp('hover-state') + $id};
+            @extend %#{if(index($states, thisbp('hover-state')), #{thisbp('hover-state') + $id}, #{thisbp('hover-state') + $id})};
           }
         }
         @if thisbp('active-state') {
