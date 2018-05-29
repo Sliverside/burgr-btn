@@ -40,3 +40,11 @@ h1 {
 .burgr-part {
   transition: 300ms;
 }
+
+.burgr {
+  &.active {
+    .burgr-part {
+      background-color: #00a0f4;
+    }
+  }
+}
