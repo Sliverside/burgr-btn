@@ -170,7 +170,7 @@ $this: () !global;
     @return if(G($this, $var-name) != null, G($this, $var-name), null);
   }
 
-  @function thisbp($var-name, $global: false) {
+  @function thisbp($var-name, $global: true) {
     @if type-of($var-name) == list {
       $result: false;
       @each $name in $var-name {
@@ -233,11 +233,12 @@ $this: () !global;
     @each $var-name, $properties in $map {
       @if type-of($properties) == map { // if there is only one breakpoint
         $breakpoints: add-bp-vars-loop($breakpoints, $properties, $var-name);
-      }@else if type-of($properties) == list { // if there is various one breakpoint
-        @each $breakpoint in $properties { // if there is no breakpoint
+      }@else if type-of($properties) == list { // if there is various breakpoints
+        @each $breakpoint in $properties {
+          $breakpoint: if(type-of($breakpoint) == map, $breakpoint, ('value': $breakpoint));
           $breakpoints: add-bp-vars-loop($breakpoints,  $breakpoint, $var-name);
         }
-      }@else {
+      }@else { // if there is no breakpoint
         $breakpoints: add-bp-vars-loop($breakpoints, ('value': $properties,), $var-name);
       }
     }

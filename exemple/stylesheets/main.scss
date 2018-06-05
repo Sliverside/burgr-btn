@@ -1,5 +1,4 @@
 @import "helpers/bases";
-
 @import "../../burgr-btn";
 
 body {
@@ -45,6 +44,36 @@ h1 {
   &.active {
     .burgr-part {
       background-color: #00a0f4;
+    }
+  }
+}
+
+$tests: (
+  '#name#': 'tests',
+  '#default#': (
+    'width': ( 20px,
+      ('value': 50px, 'max': 1000px),
+    ),
+    'height': ( 40px,
+      ('value': 60px, 'max': 1000px),
+    ),
+    'color': #00a0f4,
+  ),
+);
+
+$BPS: add-bp-vars($tests);
+
+@each $name, $test in G($BPS, 'tests') {
+  $name: if($name == '#default#', '.test', '.test-' + $name);
+  #{$name} {
+    @each $bp in $test {
+      $this: get($bp, 'breakpoint');
+      @include BPS(this('max'), this('min')) {
+        $this: $bp;
+        @if thisbp('color') {background-color: thisbp('color');}
+        @if thisbp('width') {width: thisbp('width');}
+        @if thisbp('height') {height: thisbp('height');}
+      }
     }
   }
 }
