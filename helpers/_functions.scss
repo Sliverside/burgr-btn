@@ -175,7 +175,11 @@ $this: () !global;
       $result: false;
       @each $name in $var-name {
         @if $result == false {
-          $result: if(G($this, 'values', $name) != null, true, if(G($this, 'global', $name) != null and $global == true, true, false));
+          @if G($this, 'values', $name) != null or (G($this, 'global', $name) != null and $global == true) {
+            $result: true;
+          }@else {
+            $result: false;
+          }
         }
       }
       @return $result;

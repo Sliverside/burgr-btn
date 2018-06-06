@@ -50,23 +50,20 @@ $BPS: add-bp-vars($burgrs);
 
   #{$name} {
     @each $bp in $burgr {
-      $this: get($bp, 'breakpoint') !global;
-      @include BPS(this('max'), this('min')) {
-        $this: $bp !global;
-        $height: thisbp('stroke')*3 + thisbp('space-between')*2;
-        $diagonale: 0px !global;
-        @if thisbp('width') {
-          @if thisbp(('stroke', 'space-between'), true) {
-            @if thisbp('width') < $height {
-              $diagonale: thisbp('width')*sqrt(2) - thisbp('stroke') !global;
-            }@else {
-              $diagonale: $height*sqrt(2) - thisbp('stroke') !global;
-            }
+      $this: $bp;
+      $height: thisbp('stroke')*3 + thisbp('space-between')*2;
+      $diagonale: 0px !global;
+      @if thisbp('width') {
+        @if thisbp(('stroke', 'space-between'), true) {
+          @if thisbp('width') < $height {
+            $diagonale: thisbp('width')*sqrt(2) - thisbp('stroke') !global;
+          }@else {
+            $diagonale: $height*sqrt(2) - thisbp('stroke') !global;
           }
-          width: thisbp('width');
         }
-
-        @at-root %clasic#{$id} {
+      }
+      @mixin state($state) {
+        @if $state == 'clasic' {
           .burgr-part {
             &:nth-child(1),
             &:nth-child(2),
@@ -77,8 +74,7 @@ $BPS: add-bp-vars($burgrs);
             }
           }
         }
-
-        @at-root %normal#{$id} {
+        @if $state == 'normal' {
           .burgr-part {
             &:nth-child(1),
             &:nth-child(2),
@@ -100,7 +96,7 @@ $BPS: add-bp-vars($burgrs);
           }
         }
 
-        @at-root %cross#{$id} {
+        @if $state == 'cross' {
           .burgr-part {
             &:nth-child(1) {
               transform: scaleX(1) scaleY(1) translateX(-50%) translateY(thisbp('stroke') + thisbp('space-between')) rotate(45deg);
@@ -118,7 +114,7 @@ $BPS: add-bp-vars($burgrs);
           }
         }
 
-        @at-root %vertical-points#{$id} {
+        @if $state == 'vertical-points' {
           .burgr-part {
             &:nth-child(1),
             &:nth-child(2),
@@ -130,7 +126,7 @@ $BPS: add-bp-vars($burgrs);
           }
         }
 
-        @at-root %horizontal-points#{$id} {
+        @if $state == 'horizontal-points' {
           .burgr-part {
             &:nth-child(1),
             &:nth-child(2),
@@ -149,7 +145,6 @@ $BPS: add-bp-vars($burgrs);
             }
           }
         }
-
         $arrow-diag-h: $diagonale;
         @if $diagonale/sqrt(2) > $height/2 {
           $arrow-diag-h: $height/2*sqrt(2);
@@ -166,8 +161,7 @@ $BPS: add-bp-vars($burgrs);
             $arrow-diag-v: $arrow-diag-h;
           }
         }
-
-        @at-root %arrow-left#{$id} {
+        @if $state == 'arrow-left' {
           .burgr-part {
             &:nth-child(1) {
               transform: scaleX(1) scaleY(1) translateX(-50%) translateY($arrow-diag-h/2/sqrt(2) + thisbp('stroke')/2/sqrt(2) - (thisbp('stroke')*0.5)) rotate(-45deg);
@@ -185,7 +179,7 @@ $BPS: add-bp-vars($burgrs);
           }
         }
 
-        @at-root %arrow-right#{$id} {
+        @if $state == 'arrow-right' {
           .burgr-part {
             &:nth-child(1) {
               transform: scaleX(1) scaleY(1) translateX(-50%) translateY($arrow-diag-h/2/sqrt(2) + thisbp('stroke')/2/sqrt(2) - (thisbp('stroke')*0.5)) rotate(45deg);
@@ -203,7 +197,7 @@ $BPS: add-bp-vars($burgrs);
           }
         }
 
-        @at-root %arrow-top#{$id} {
+        @if $state == 'arrow-top' {
           .burgr-part {
             &:nth-child(1) {
               transform: scaleX(1) scaleY(1) translateX(calc(-50% + #{$arrow-diag-v/4*sqrt(2) - thisbp('stroke')/4*sqrt(2)})) translateY($height/2 - thisbp('stroke')/2) rotate(45deg);
@@ -221,7 +215,7 @@ $BPS: add-bp-vars($burgrs);
           }
         }
 
-        @at-root %arrow-bottom#{$id} {
+        @if $state == 'arrow-bottom' {
           .burgr-part {
             &:nth-child(1) {
               transform: scaleX(1) scaleY(1) translateX(calc(-50% + #{$arrow-diag-v/4*sqrt(2) - thisbp('stroke')/4*sqrt(2)})) translateY($height/2 - thisbp('stroke')/2) rotate(-45deg);
@@ -238,30 +232,33 @@ $BPS: add-bp-vars($burgrs);
             }
           }
         }
+      }
 
-        @if thisbp(('stroke', 'space-between')) {height: $height;}
-        @extend %#{if(thisbp('state') and index($states, thisbp('state')), #{thisbp('state') + $id}, 'normal' + $id)};
+      @include BPS(G($bp, 'breakpoint', 'max'), G($bp, 'breakpoint', 'min')) {
+        @if thisbp('width', false) {width: thisbp('width');}
+        @if thisbp(('stroke', 'space-between'), false) {height: $height;}
+        @include state(if(thisbp('state') and index($states, thisbp('state')), thisbp('state'), 'normal'));
         @if thisbp('hover-state') {
           &:hover {
-            @extend %#{if(index($states, thisbp('hover-state')), #{thisbp('hover-state') + $id}, #{thisbp('hover-state') + $id})};
+            @include state(if(index($states, thisbp('hover-state')), thisbp('hover-state'), thisbp('hover-state')));
           }
         }
         @if thisbp('active-state') {
           &.active {
-            @extend %#{if(index($states, thisbp('active-state')), #{thisbp('active-state') + $id}, #{thisbp('active-state') + $id})};
+            @include state(if(index($states, thisbp('active-state')), thisbp('active-state'), thisbp('active-state')));
           }
         }
         .burgr-part {
           transition: 300ms;
-          left: thisbp('width')/2;
           opacity: 1;
-          @if thisbp('stroke') {height: thisbp('stroke');}
-          @if thisbp('width') {width: thisbp('width');}
+          @if thisbp('width', false) {left: thisbp('width')/2;}
+          @if thisbp('stroke', false) {height: thisbp('stroke');}
+          @if thisbp('width', false) {width: thisbp('width');}
           &:nth-child(2) {
-            @if thisbp('space-between', 'stroke') {top: thisbp('stroke') + thisbp('space-between');}
+            @if thisbp(('space-between', 'stroke'), false) {top: thisbp('stroke') + thisbp('space-between');}
           }
           &:nth-child(3) {
-            @if thisbp('space-between', 'stroke') {top: thisbp('stroke')*2 + thisbp('space-between')*2;}
+            @if thisbp(('space-between', 'stroke'), false) {top: thisbp('stroke')*2 + thisbp('space-between')*2;}
           }
         }
       }

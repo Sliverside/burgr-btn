@@ -1,4 +1,20 @@
 @import "helpers/bases";
+
+$burgr-default: (
+  'width': ( 40px,
+    ('max': 1000px, 'value': 80px),
+  ),
+  'stroke': ( 5px,
+    ('max': 1000px, 'value': 10px),
+  ),
+  'space-between': ( 4px,
+    ('max': 1000px, 'value': 8px),
+  ),
+  'state': 'normal',
+  'active-state': 'cross',
+  'hover-state': 'clasic',
+);
+
 @import "../../burgr-btn";
 
 body {
@@ -31,6 +47,7 @@ h1 {
   display: inline-block;
   background-color: #fff;
   padding: 10px;
+  margin-bottom: 8px;
   &:nth-last-child(n+2) {
     margin-right: 8px;
   }
@@ -48,32 +65,38 @@ h1 {
   }
 }
 
-$tests: (
-  '#name#': 'tests',
-  '#default#': (
-    'width': ( 20px,
-      ('value': 50px, 'max': 1000px),
-    ),
-    'height': ( 40px,
-      ('value': 60px, 'max': 1000px),
-    ),
-    'color': #00a0f4,
-  ),
-);
-
-$BPS: add-bp-vars($tests);
-
-@each $name, $test in G($BPS, 'tests') {
-  $name: if($name == '#default#', '.test', '.test-' + $name);
-  #{$name} {
-    @each $bp in $test {
-      $this: get($bp, 'breakpoint');
-      @include BPS(this('max'), this('min')) {
-        $this: $bp;
-        @if thisbp('color') {background-color: thisbp('color');}
-        @if thisbp('width') {width: thisbp('width');}
-        @if thisbp('height') {height: thisbp('height');}
-      }
-    }
-  }
-}
+// $tests: (
+//   '#name#': 'tests',
+//   '#default#': (
+//     'width': ( 20px,
+//       ('value': 50px, 'max': 1000px),
+//     ),
+//     'height': ( 40px,
+//       ('value': 60px, 'max': 1000px),
+//     ),
+//     'color': #00a0f4,
+//   ),
+// );
+//
+// $BPS: add-bp-vars($tests);
+// @mixin blue {
+//   background-color: blue;
+// }
+// @each $name, $test in G($BPS, 'tests') {
+//   $name: if($name == '#default#', '.test', '.test-' + $name);
+//   #{$name} {
+//     @each $bp in $test {
+//       $this: get($bp, 'breakpoint');
+//       @include BPS(this('max'), this('min')) {
+//         $this: $bp;
+//         @if thisbp('color', false) {background-color: thisbp('color');}
+//         @if thisbp('width', false) {width: thisbp('width');}
+//         @if thisbp('height', false) {height: thisbp('height');}
+//         .atest {
+//           background-color: green;
+//           @include blue;
+//         }
+//       }
+//     }
+//   }
+// }
