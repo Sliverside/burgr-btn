@@ -5,7 +5,7 @@ $burgr-default: (
   'width': 40px, // (px)
   'stroke': 5px, // (px)
   'space-between': 4px, // (px)
-  'state': 'normal', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
+  'state': 'clasic', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
   'active-state': 'cross', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
   'hover-state': 'clasic', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
   // 'arrow-size-even': true, // true : arrows will always have same size, false: arrows will always take the maximum space they can
@@ -15,12 +15,12 @@ $burgr: () !default;
 $burgr: map-merge($burgr-default, $burgr);
 
 $burgrs-default: (
-  // 'clasic':(
-  //   'parent':  '#default#',
-  //   'state': 'clasic',
-  //   'active-state': 'cross',
-  //   'hover-state': 'normal'
-  // ),
+  'clasic':(
+    'parent':  '#default#',
+    'state': 'clasic',
+    'active-state': 'cross',
+    'hover-state': 'normal'
+  ),
   'cross':(
     'parent':  '#default#',
     'state': 'cross',
@@ -290,7 +290,7 @@ $BPS: add-bp-vars($burgrs-cache, 'burgrs');
         }
 
         @if Gbp('state') {
-          @include state($this, 'state', true);
+          @include state($this, 'state');
         }
 
         @if Gbp('hover-state') {
