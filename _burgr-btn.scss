@@ -107,7 +107,7 @@ $BPS: add-bp-vars($burgrs-cache, 'burgrs');
     }
   }
 
-  @if $state == 'clasic' {
+  @if $state == 'classic' {
     .burgr-part {
       &:nth-child(1),
       &:nth-child(2),
