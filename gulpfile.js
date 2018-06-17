@@ -6,12 +6,15 @@ const postcss = require("gulp-postcss")
 const autoprefixer = require("autoprefixer")
 const cssnano = require("cssnano")
 
+var ignoredFolders = "node_modules, .git"
+var autoprefixerVersion = "last 2 versions"
+
 gulp.task("sass:watch", () => watchsass(
-    ["./**/*.scss", "!./node_modules/**/*"],
+    ["./**/*.scss", "!./{" + ignoredFolders + "}/**/*"],
     {base: "./"}
   )
   .pipe(sourcemaps.init())
   .pipe(sass())
-  .pipe(postcss([ autoprefixer({browsers: ['last 2 versions']}), cssnano() ]))
+  .pipe(postcss([ autoprefixer({browsers: [autoprefixerVersion]}), cssnano() ]))
   .pipe(sourcemaps.write("./"))
   .pipe(gulp.dest("./")));
