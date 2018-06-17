@@ -5,7 +5,7 @@ $burgr-default: (
   'width': 40px, // (px)
   'stroke': 5px, // (px)
   'space-between': 4px, // (px)
-  'state': 'clasic', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
+  'state': 'normal', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
   'active-state': 'cross', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
   'hover-state': 'clasic', // normal, clasic, cross, arrow-left, arrow-right, arrow-top, arrow-bottom, vertical-points, horizontal-points
   // 'arrow-size-even': true, // true : arrows will always have same size, false: arrows will always take the maximum space they can
@@ -13,7 +13,6 @@ $burgr-default: (
 
 $burgr: () !default;
 $burgr: map-merge($burgr-default, $burgr);
-
 $burgrs-default: (
   'clasic':(
     'parent':  '#default#',

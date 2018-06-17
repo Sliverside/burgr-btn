@@ -58,6 +58,9 @@ h1 {
   &.active {
     .burgr-part {
       background-color: #00a0f4;
+      ::first-letter {
+        background-color: red;
+      }
     }
   }
 }
