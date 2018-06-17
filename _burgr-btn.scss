@@ -13,6 +13,7 @@ $burgr-default: (
 
 $burgr: () !default;
 $burgr: map-merge($burgr-default, $burgr);
+
 $burgrs-default: (
   'clasic':(
     'parent':  '#default#',
@@ -24,6 +25,7 @@ $burgrs-default: (
     'parent':  '#default#',
     'state': 'cross',
     'active-state': 'arrow-right',
+    'hover-state': 'arrow-top'
   ),
   'left':(
     'parent':  '#default#',
@@ -106,7 +108,7 @@ $BPS: add-bp-vars($burgrs-cache, 'burgrs');
     }
   }
 
-  @if $state == 'classic' {
+  @if $state == 'clasic' {
     .burgr-part {
       &:nth-child(1),
       &:nth-child(2),
@@ -224,7 +226,7 @@ $BPS: add-bp-vars($burgrs-cache, 'burgrs');
         pointer-events: none;
       }
     }
-  }@else if $default == true { // state: normal
+  }@else if $state == 'normal' or $default == true { // state: normal
     .burgr-part {
       &:nth-child(1),
       &:nth-child(2),
@@ -289,7 +291,7 @@ $BPS: add-bp-vars($burgrs-cache, 'burgrs');
         }
 
         @if Gbp('state') {
-          @include state($this, 'state');
+          @include state($this, 'state', if(Gbp('parent') == null, true, false));
         }
 
         @if Gbp('hover-state') {
