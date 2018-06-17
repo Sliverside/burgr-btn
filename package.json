@@ -1,0 +1,29 @@
+{
+  "name": "burgr-btn",
+  "version": "1.0.0",
+  "description": "",
+  "main": "exemple/index.html",
+  "dependencies": {},
+  "devDependencies": {
+    "autoprefixer": "^8.6.2",
+    "cssnano": "^3.10.0",
+    "gulp": "^4.0.0",
+    "gulp-postcss": "^7.0.1",
+    "gulp-sass": "^4.0.1",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-watch-sass": "^1.4.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sliverside/burgr-btn.git"
+  },
+  "author": "Lilian Moulanier",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Sliverside/burgr-btn/issues"
+  },
+  "homepage": "https://github.com/Sliverside/burgr-btn#readme"
+}
