@@ -15,7 +15,7 @@ Then, in the html file use it like that :
   <span class="burgr-part"></span>
 </div>
 ```
-ps : I'll later make it more simple by adding js and then you can use it like that :
+*ps : I'll later make it more simple by adding js and then you can use it like that :*
 ```
 <div class="burgr"></div>
 ```
@@ -27,7 +27,7 @@ You can go to the [sass install webpage](https://sass-lang.com/install)
 
 #### Step \#2 create the structure
 
-__way 1:__
+__way 1 ->__
 Document structure :
 ```
 your project
@@ -63,6 +63,35 @@ add this to your index.html head :
 
 ```
 <link rel="stylesheet" href="stylesheets/burgr-btn.setup.css">
+```
+__way 2 ->__
+Document structure :
+```
+your project
+|   index.html
+|
+|-- stylesheets
+|   |   style.scss
+|   |   style.css
+|
+|-- addons
+|   |-- burgr-btn
+|   |   |   _burgr-btn.scss
+```
+
+style.scss should look like this :
+
+```
+$burgr: (
+  'width':50px,
+  'stroke': 5px,
+  'space-between': 4px,
+  ),
+);
+
+// Some other parameters here
+
+@import "../addons/burgr-btn/burgr-btn";
 ```
 
 #### Step \#3 write your parameters
