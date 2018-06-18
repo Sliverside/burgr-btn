@@ -42,6 +42,11 @@ your project
 |-- addons
 |   |-- burgr-btn
 |   |   |   _burgr-btn.scss
+|   |   |
+|   |   |-- helpers
+|   |   |   |   _functions.scss
+|   |   |   |   _breakpointsObj.scss
+|   |   |   |   _math.scss
 ```
 
 __burgr-btn.setup.scss :__
@@ -77,6 +82,11 @@ your project
 |-- addons
 |   |-- burgr-btn
 |   |   |   _burgr-btn.scss
+|   |   |
+|   |   |-- helpers
+|   |   |   |   _functions.scss
+|   |   |   |   _breakpointsObj.scss
+|   |   |   |   _math.scss
 ```
 
 __style.scss :__
