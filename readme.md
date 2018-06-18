@@ -27,8 +27,8 @@ You can go to the [sass install webpage](https://sass-lang.com/install)
 
 #### Step \#2 create the structure
 
-__way 1 ->__
-Document structure :
+##### way 1 ->
+__Document structure :__
 ```
 your project
 |   index.html
@@ -44,7 +44,7 @@ your project
 |   |   |   _burgr-btn.scss
 ```
 
-burgr-btn.setup.scss should look like this :
+__burgr-btn.setup.scss :__
 
 ```
 $burgr: (
@@ -59,13 +59,13 @@ $burgr: (
 @import "../addons/burgr-btn/burgr-btn";
 ```
 
-add this to your index.html head :
+__index.html head :__
 
 ```
 <link rel="stylesheet" href="stylesheets/burgr-btn.setup.css">
 ```
-__way 2 ->__
-Document structure :
+##### way 2 ->
+__Document structure :__
 ```
 your project
 |   index.html
@@ -79,7 +79,7 @@ your project
 |   |   |   _burgr-btn.scss
 ```
 
-style.scss should look like this :
+__style.scss :__
 
 ```
 $burgr: (
