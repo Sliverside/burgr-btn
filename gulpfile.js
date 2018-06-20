@@ -9,7 +9,7 @@ const cssnano = require("cssnano")
 var ignoredFolders = "node_modules, .git"
 var autoprefixerVersion = "last 2 versions"
 
-gulp.task("sass:watch", () => watchsass(
+gulp.task("watch", () => watchsass(
     ["./**/*.scss", "!./{" + ignoredFolders + "}/**/*"],
     {base: "./"}
   )

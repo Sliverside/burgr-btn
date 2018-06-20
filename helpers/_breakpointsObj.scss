@@ -5,11 +5,38 @@ $this: () !global;
 
 // | breakpoints ============================================================ \\
 
+$phone: 600px !default;
+$tablet-portrait: 900px !default;
+$desktop: 1200px !default;
+$big-desktop: 1800px !default;
+
+$bpNames: (
+  'phone': $phone,
+  'tablet-portrait': $tablet-portrait,
+  'desktop': $desktop,
+  'big-desktop': $big-desktop,
+);
+
 /// this mixins create simple media queries and is designed for use it in a loop
-/// @arg {numbers} $max - the max-width value of your media queries
+/// @arg {numbers | string} $maxORbpName - the max-width value of your media queries or a breakpoint name and optionaly a suffixe cf: doc/breakpoints
 /// @arg {numbers} $min - the min-width value of your media queries
-@mixin BPS($max, $min: false) {
-  $max: if($max, $max - 0.05px, $max);
+@mixin BPS($maxORbpName, $min: false) {
+
+  @if type-of($maxORbpName) == string {
+    $bpName: '';
+    $suffixe: '';
+    @if str-index($maxORbpName, "@") {
+      $bpName: str-slice($maxORbpName, 1, str-index($maxORbpName, "@"));
+      $suffixe: str-slice($maxORbpName, str-index($maxORbpName, "@"));
+      @if $suffixe == 'up' {
+        
+      }
+    }@else {
+      $bpName: $maxORbpName;
+    }
+  }
+
+  $max: if($maxORbpName, $max - 0.05px, $max);
   @if $max != false and $min != false {
     @media (max-width: $max) and (min-width: $min) {@content;}
   }@else if $max != false {
