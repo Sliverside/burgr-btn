@@ -10,6 +10,10 @@ $max-tablet-portrait: 900px !default;
 $max-desktop: 1200px !default;
 $max-big-desktop: 1800px !default;
 
+@if not ($max-phone <= $max-tablet-portrait) or not ($max-tablet-portrait <= $max-desktop) or not ($max-desktop <= $max-big-desktop) {
+  @error 'make your breakpoints respect this : $max-phone < $max-tablet-portrait < $max-desktop < $max-big-desktop';
+}
+
 $bpNames: (
   'max-phone': $max-phone,
   'max-tablet-portrait': $max-tablet-portrait,
@@ -18,25 +22,53 @@ $bpNames: (
 );
 
 /// this mixins create simple media queries and is designed for use it in a loop
-/// @arg {numbers | string} $maxORbpName - the max-width value of your media queries or a breakpoint name and optionaly a suffixe cf: doc/breakpoints
-/// @arg {numbers} $min - the min-width value of your media queries
+/// @arg {number | String} $maxORbpName - the max-width value of your media queries or a breakpoint name and optionaly a suffixe cf: doc/breakpoints
+/// @arg {number} $min - the min-width value of your media queries
 @mixin BPS($maxORbpName, $min: false) {
+  $max: false;
 
   @if type-of($maxORbpName) == string {
     $bpName: '';
-    $suffixe: '';
+    $suffix: '';
     @if str-index($maxORbpName, "@") {
-      $bpName: str-slice($maxORbpName, 1, str-index($maxORbpName, "@"));
-      $suffixe: str-slice($maxORbpName, str-index($maxORbpName, "@"));
-      @if $suffixe == 'up' {
-
+      $bpName: 'max-' + str-slice($maxORbpName, 1, str-index($maxORbpName, "@") - 1);
+      $suffix: str-slice($maxORbpName, str-index($maxORbpName, "@") + 1);
+    }@else {
+      $bpName: 'max-' + $maxORbpName;
+      $suffix: false;
+    }
+    $bp-index: index(map-keys($bpNames), $bpName);
+    $bp-indexMinus1: $bp-index - 1;
+    $bp-indexPlus1: $bp-index + 1;
+    @if $bp-indexMinus1 < 1 {
+      $bp-indexMinus1: false;
+    }
+    @if $bp-indexPlus1 > length($bpNames) {
+      $bp-indexPlus1: false;
+    }
+    @if $suffix {
+      @if $suffix == 'up' and $bp-indexMinus1 {
+        $min: nth(map-values($bpNames), $bp-indexMinus1);
+      }@else {
+        $min: false;
+      }
+      @if $suffix == 'down' and $bp-indexPlus1 {
+        $max: nth(map-values($bpNames), $bp-indexPlus1);
+      }@else {
+        $max: false;
       }
     }@else {
-      $bpName: $maxORbpName;
+      $max: G($bpNames, $bpName);
+      $min: if($bp-indexMinus1 and $bp-indexMinus1 <= length($bpNames), nth(map-values($bpNames), $bp-indexMinus1), false);
     }
   }
 
-  $max: if($maxORbpName, $maxORbpName - 0.05px, $maxORbpName);
+  @if type-of($maxORbpName) == number {
+    $max: $maxORbpName;
+  }
+
+  $max: if($max, $max - 0.05px, $max);
+
   @if $max != false and $min != false {
     @media (max-width: $max) and (min-width: $min) {@content;}
   }@else if $max != false {

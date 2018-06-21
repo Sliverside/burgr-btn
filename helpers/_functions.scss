@@ -3,8 +3,8 @@
 /// Map deep get
 /// @author Hugo Giraudel
 /// @access public
-/// @param {Map} $map - Map
-/// @param {Arglist} $keys - Key chain
+/// @arg {Map} $map - Map
+/// @arg {Arglist} $keys - Key chain
 /// @return {*} - Desired value
 @function get($map, $keys...) {
   $cache: $map;
@@ -25,9 +25,9 @@
 /// Deep set function to set a value in nested maps
 /// @author Hugo Giraudel
 /// @access public
-/// @param {Map} $map - Map
-/// @param {List} $keys -  Key chaine
-/// @param {*} $value - Value to assign
+/// @arg {Map} $map - Map
+/// @arg {List} $keys -  Key chaine
+/// @arg {*} $value - Value to assign
 /// @return {Map} map with the new key and her value
 @function set($map, $keys, $value) {
   $maps: ($map,);
@@ -77,6 +77,11 @@
 
 // | map deep delete ======================================================== \\
 
+/// map deep delete
+/// @arg $map {Map}
+/// @arg $keys {Map | List}
+/// @arg $count {number}
+/// @arg $length {number}
 @function delete($map, $keys, $count: 1, $length: false) {
   @if $length == false {
     $length: length($keys);
@@ -107,8 +112,36 @@
   @return $result;
 }
 
+/// @alias delete
 @function D($map, $keys, $count: 1, $length: false) {
   @return delete($map, $keys, $count, $length);
+}
+
+// | map sort by value ====================================================== \\
+
+/// map sort by value
+/// @arg $map {map}
+/// @arg $order-by {String} use 'DESC' if you want items to be sort from bigger to lower and 'ASC' for lower to bigger
+@function map-sort($map, $desc: false) {
+  $map-new: ();
+  @for $i from 1 through length($map) {
+    $i: $i + 1;
+    $compare-k: nth(map-keys($map), 1);
+    $compare-v: nth(map-values($map), 1);
+    @each $k, $v in $map {
+      @if $v < $compare-v {
+        $compare-k: $k;
+        $compare-v: $v;
+      }
+    }
+    @if $desc == true {
+      $map-new: map-merge(($compare-k: $compare-v), $map-new);
+    }@else {
+      $map-new: map-merge($map-new, ($compare-k: $compare-v));
+    }
+    $map: D($map, $compare-k);
+  }
+  @return $map-new;
 }
 
 // | list delete ============================================================ \\
