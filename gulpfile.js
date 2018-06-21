@@ -5,12 +5,14 @@ const sass = require("gulp-sass")
 const postcss = require("gulp-postcss")
 const autoprefixer = require("autoprefixer")
 const cssnano = require("cssnano")
+const mqpacker = require("css-mqpacker")
 const plumber = require('gulp-plumber')
 const notify = require('gulp-notify')
 const logger = require('gulp-logger')
 
 var ignoredFolders = "node_modules, .git"
 var autoprefixerVersion = "last 2 versions"
+var cssnanoConfig = {preset: 'default'}
 
 gulp.task("watch", () => watchsass(
     ["./**/*.scss", "!./{" + ignoredFolders + "}/**/*"],
@@ -28,7 +30,7 @@ gulp.task("watch", () => watchsass(
         before: 'Compiling scss file(s)...',
         extname: '.scss'
     }))
-  .pipe(postcss([ autoprefixer({browsers: [autoprefixerVersion]}), cssnano() ]))
+  .pipe(postcss([ autoprefixer({browsers: [autoprefixerVersion]}), mqpacker(), cssnano(cssnanoConfig) ]))
   .pipe(notify({title: 'SCSS compilling complete !', text: 'SCSS file(s) has been compiled with success !', onLast: false}))
   .pipe(sourcemaps.write("./"))
   .pipe(gulp.dest("./"))

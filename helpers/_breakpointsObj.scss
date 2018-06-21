@@ -17,8 +17,6 @@ $bpNames: (
   'max-big-desktop': $max-big-desktop,
 );
 
-@error index(map-keys($bpNames), 'emax-tablet-portrait');
-
 /// this mixins create simple media queries and is designed for use it in a loop
 /// @arg {numbers | string} $maxORbpName - the max-width value of your media queries or a breakpoint name and optionaly a suffixe cf: doc/breakpoints
 /// @arg {numbers} $min - the min-width value of your media queries
