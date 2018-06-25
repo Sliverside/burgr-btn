@@ -1,5 +1,5 @@
 @import "helpers/functions";
-@import "helpers/breakpointsObj";
+@import "helpers/breakpoints";
 @import "helpers/math";
 
 $burgr-default: (
@@ -65,21 +65,6 @@ $burgrs: () !default;
 $burgrs: map-merge($burgrs-default, $burgrs);
 
 $burgrs: map-merge(('#default#' : $burgr), $burgrs);
-
-$burgrs-cache: ();
-@each $name, $v in $burgrs {
-  $this: $v;
-  @if this('parent') {
-    $parent: G($burgrs, this('parent'));
-    $parent: R($parent, 'state');
-    $parent: R($parent, 'hover-state');
-    $parent: R($parent, 'active-state');
-    $burgrs-cache: S($burgrs-cache, $name, map-merge($parent, $this));
-  }@else {
-    $burgrs-cache: S($burgrs-cache, $name,map-merge($burgr, $this));
-  }
-}
-$BPS: add-bp-vars($burgrs-cache, 'burgrs');
 
 .burgr {
   position: relative;
@@ -250,62 +235,88 @@ $BPS: add-bp-vars($burgrs-cache, 'burgrs');
   }
 }
 
-@each $name, $burgr in G($BPS, 'burgrs') {
-  $this: $burgr !global;
-  @if G(nth($this, 1), 'global', 'parent') {
-    $name: if( G(nth($this, 1), 'global', 'parent') == "#default#", '.burgr-' + $name, 'burgr-'+ G(nth($this, 1), 'global', 'parent') + '-' + $name);
-  }@else {
-    $name: if($name == "#default#", '.burgr', '.burgr-' + $name);
+@mixin burgr-gen($burgrs, $prefix) {
+  $burgrs: ('#default#': $burgr-default);
+  $burgrs-cache: ();
+  @each $name, $v in $burgrs {
+    $this: $v !global;
+    @if this('parent') {
+      $parent: G($burgrs, this('parent'));
+      $parent: R($parent, 'state');
+      $parent: R($parent, 'hover-state');
+      $parent: R($parent, 'active-state');
+      $burgrs-cache: S($burgrs-cache, $name, map-merge($parent, $this));
+    }@else {
+      $burgrs-cache: S($burgrs-cache, $name, map-merge($burgr, $this));
+    }
   }
+  $burgrs: add-bp-vars($burgrs-cache);
 
-  #{$name} {
-    @each $bp in $burgr {
-      $this: $bp;
-      $this: Sbp('height', Gbp('stroke')*3 + Gbp('space-between')*2);
-      $this: Sbp('diagonale', 0px);
-      @if Gbp('width') {
-        @if Gbp(('stroke', 'space-between'), true) {
-          @if Gbp('width') < Gbp('height') {
-            $this: Sbp('diagonale', Gbp('width')*sqrt(2) - Gbp('stroke'));
-          }@else {
-            $this: Sbp('diagonale', Gbp('height')*sqrt(2) - Gbp('stroke'));
-          }
-        }
+  @each $name, $burgr in $burgrs {
+    $this: $burgr !global;
+    @if G(nth($this, 1), 'global', 'parent') {
+      @if G(nth($this, 1), 'global', 'parent') == "#default#" {
+        $name: '.' + $prefix + '-' + $name, $prefix + '-' + G(nth($this, 1));
+      }@else {
+        $name: '.' + $prefix + '-' + G(nth($this, 1), 'global', 'parent') + '-' + $name;
       }
-
-      @include BPS(G($bp, 'breakpoint', 'max'), G($bp, 'breakpoint', 'min')) {
-        @if Gbp('width', false) {width: Gbp('width');}
-        @if Gbp(('stroke', 'space-between'), false) {height: Gbp('height');}
-        @if Gbp('parent') == null {
-          .burgr-part {
-            opacity: 1;
-            @if Gbp('width', false) {left: Gbp('width')/2;}
-            @if Gbp('stroke', false) {height: Gbp('stroke');}
-            @if Gbp('width', false) {width: Gbp('width');}
-            &:nth-child(2) {
-              @if Gbp(('space-between', 'stroke'), false) {top: Gbp('stroke') + Gbp('space-between');}
-            }
-            &:nth-child(3) {
-              @if Gbp(('space-between', 'stroke'), false) {top: Gbp('stroke')*2 + Gbp('space-between')*2;}
+    }@else if $name == "#default#"{
+      $name: '.'+ $prefix;
+    }@else {
+      $name: '.'+ $prefix +'-' + $name;
+    }
+    #{$name} {
+      @each $bp in $burgr {
+        $this: $bp !global;
+        $this: Sbp('height', Gbp('stroke')*3 + Gbp('space-between')*2) !global;
+        $this: Sbp('diagonale', 0px) !global;
+        @if Gbp('width') {
+          @if Gbp(('stroke', 'space-between'), true) {
+            @if Gbp('width') < Gbp('height') {
+              $this: Sbp('diagonale', Gbp('width')*sqrt(2) - Gbp('stroke')) !global;
+            }@else {
+              $this: Sbp('diagonale', Gbp('height')*sqrt(2) - Gbp('stroke')) !global;
             }
           }
         }
 
-        @if Gbp('state') {
-          @include state($this, 'state', if(Gbp('parent') == null, true, false));
-        }
-
-        @if Gbp('hover-state') {
-          &:hover {
-            @include state($this, 'hover-state');
+        @include BPS(G($bp, 'breakpoint', 'max'), G($bp, 'breakpoint', 'min')) {
+          @if Gbp('width', false) {width: Gbp('width');}
+          @if Gbp(('stroke', 'space-between'), false) {height: Gbp('height');}
+          @if Gbp('parent') == null {
+            .burgr-part {
+              opacity: 1;
+              @if Gbp('width', false) {left: Gbp('width')/2;}
+              @if Gbp('stroke', false) {height: Gbp('stroke');}
+              @if Gbp('width', false) {width: Gbp('width');}
+              &:nth-child(2) {
+                @if Gbp(('space-between', 'stroke'), false) {top: Gbp('stroke') + Gbp('space-between');}
+              }
+              &:nth-child(3) {
+                @if Gbp(('space-between', 'stroke'), false) {top: Gbp('stroke')*2 + Gbp('space-between')*2;}
+              }
+            }
           }
-        }
-        @if Gbp('active-state') {
-          &.active {
-            @include state($this, 'active-state');
+
+          @if Gbp('state') {
+            @include state($this, 'state', if(Gbp('parent') == null, true, false));
+          }
+
+          @if Gbp('hover-state') {
+            &:hover {
+              @include state($this, 'hover-state');
+            }
+          }
+          @if Gbp('active-state') {
+            &.active {
+              @include state($this, 'active-state');
+            }
           }
         }
       }
     }
   }
+}
+* {
+  @include burgr-gen($burgrs, 'burgr');
 }
