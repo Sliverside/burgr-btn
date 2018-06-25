@@ -24,6 +24,8 @@ $bpNames: (
 /// this mixins create simple media queries and is designed for use it in a loop
 /// @arg {number | String} $maxORbpName - the max-width value of your media queries or a breakpoint name and optionaly a suffixe cf: doc/breakpoints
 /// @arg {number} $min - the min-width value of your media queries
+/// @output - A media queries with the desired breakpoints
+/// @content - Content of the media queries
 @mixin BPS($maxORbpName, $min: false) {
   $max: false;
 
@@ -79,7 +81,8 @@ $bpNames: (
 }
 
 // | this =================================================================== \\
-
+/// function to map deep get a value with $this as the map
+/// @arg {String | Arglist} $keys - keychain targeting the value
 @function this($keys...) {
   @return G($this, $keys...);
 }
@@ -133,7 +136,7 @@ $bpNames: (
   $this: $new !global;
   $global: if(this('max') == false and this('min') == false, ($var-name: this('value')), null);
   $value: G($new, 'value');
-  $new-breakpoint: D($new, 'value');
+  $new-breakpoint: R($new, 'value');
   $finded: false;
   $values: ();
   $temp: ();
