@@ -153,7 +153,7 @@ $bpNames: (
     $breakpoint: map-merge($breakpoint, ('global': $global));
     @if this('breakpoint') == $new-breakpoint {
       $finded: true;
-      $breakpoint: map-merge($breakpoint, ('values': (S(this('values'), $var-name, $value))));
+      $breakpoint: map-merge( $breakpoint, ('values': (S(this('values'), $var-name, $value))) );
     }
     $temp: append($temp, $breakpoint);
   }
@@ -166,7 +166,7 @@ $bpNames: (
 
 // | add breakpoints vars =================================================== \\
 
-@function add-bp-vars($map, $name, $object: true, $object-child: false) {
+@function add-bp-vars($map, $name: false, $object: true, $object-child: false) {
   $breakpoints: ();
   @if $object {
     @each $instance-name, $instance in $map {
@@ -186,9 +186,5 @@ $bpNames: (
       }
     }
   }
-  @if $object-child {
-    @return $breakpoints;
-  }@else{
-    @return S($BPS, $name, $breakpoints);
-  }
+  @return $breakpoints;
 }
