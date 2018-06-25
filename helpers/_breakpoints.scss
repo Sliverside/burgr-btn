@@ -70,7 +70,6 @@ $bpNames: (
   }
 
   $max: if($max, $max - 0.05px, $max);
-
   @if $max != false and $min != false {
     @media (max-width: $max) and (min-width: $min) {@content;}
   }@else if $max != false {

@@ -17,47 +17,36 @@ $burgr: map-merge($burgr-default, $burgr);
 
 $burgrs-default: (
   'clasic':(
-    'parent':  '#default#',
+    'parent': '#default#',
     'state': 'clasic',
-    'active-state': 'cross',
-    'hover-state': 'normal'
   ),
   'cross':(
-    'parent':  '#default#',
+    'parent': '#default#',
     'state': 'cross',
-    'active-state': 'arrow-right',
-    'hover-state': 'arrow-top'
   ),
   'left':(
-    'parent':  '#default#',
+    'parent': '#default#',
     'state': 'arrow-left',
-    'active-state': 'arrow-right',
   ),
   'right':(
-    'parent':  '#default#',
+    'parent': '#default#',
     'state': 'arrow-right',
-    'active-state': 'arrow-left',
   ),
   'top':(
-    'parent':  '#default#',
+    'parent': '#default#',
     'state': 'arrow-top',
-    'active-state': 'arrow-bottom',
   ),
   'bottom':(
     'parent':  '#default#',
     'state': 'arrow-bottom',
-    'active-state': 'arrow-top',
   ),
   'vertical-points':(
-    'parent':  '#default#',
+    'parent': '#default#',
     'state': 'vertical-points',
-    'active-state': 'cross',
-    'hover-state': 'normal'
   ),
   'horizontal-points':(
-    'parent':  '#default#',
+    'parent': '#default#',
     'state': 'horizontal-points',
-    'active-state': 'cross',
   ),
 ) !default;
 
@@ -236,7 +225,6 @@ $burgrs: map-merge(('#default#' : $burgr), $burgrs);
 }
 
 @mixin burgr-gen($burgrs, $prefix) {
-  $burgrs: ('#default#': $burgr-default);
   $burgrs-cache: ();
   @each $name, $v in $burgrs {
     $this: $v !global;
@@ -247,18 +235,18 @@ $burgrs: map-merge(('#default#' : $burgr), $burgrs);
       $parent: R($parent, 'active-state');
       $burgrs-cache: S($burgrs-cache, $name, map-merge($parent, $this));
     }@else {
-      $burgrs-cache: S($burgrs-cache, $name, map-merge($burgr, $this));
+      $burgrs-cache: S($burgrs-cache, $name, $this);
     }
   }
   $burgrs: add-bp-vars($burgrs-cache);
-
   @each $name, $burgr in $burgrs {
     $this: $burgr !global;
     @if G(nth($this, 1), 'global', 'parent') {
-      @if G(nth($this, 1), 'global', 'parent') == "#default#" {
-        $name: '.' + $prefix + '-' + $name, $prefix + '-' + G(nth($this, 1));
+      $parent-name: G(nth($this, 1), 'global', 'parent');
+      @if $parent-name == "#default#" {
+        $name: '.' + $prefix + '-' + $name;
       }@else {
-        $name: '.' + $prefix + '-' + G(nth($this, 1), 'global', 'parent') + '-' + $name;
+        $name: '.' + $prefix + '-' + $parent-name + '-' + $name;
       }
     }@else if $name == "#default#"{
       $name: '.'+ $prefix;
@@ -317,6 +305,4 @@ $burgrs: map-merge(('#default#' : $burgr), $burgrs);
     }
   }
 }
-* {
-  @include burgr-gen($burgrs, 'burgr');
-}
+@include burgr-gen($burgrs, 'burgr');
