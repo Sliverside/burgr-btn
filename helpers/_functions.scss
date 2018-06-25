@@ -1,12 +1,11 @@
 // | map deep get ============================================================\\
 
-/// Map deep get
+/// Deep get function to get a value in nested maps
 /// @author Hugo Giraudel
-/// @access public
 /// @arg {Map} $map - Map
-/// @arg {Arglist} $keys - Key chain
+/// @arg {Arglist} $keys - keychain targeting the value
 /// @return {*} - Desired value
-@function get($map, $keys...) {
+@function map-deep-get($map, $keys...) {
   $cache: $map;
     @each $key in $keys {
       @if type-of($map) == map {
@@ -17,19 +16,19 @@
     }
     @return $map;
 }
+/// @alias map-deep-get
 @function G($map, $keys...) {
-  @return get($map, $keys...);
+  @return map-deep-get($map, $keys...);
 }
 // | map deep set =========================================================== \\
 
 /// Deep set function to set a value in nested maps
 /// @author Hugo Giraudel
-/// @access public
 /// @arg {Map} $map - Map
-/// @arg {List} $keys -  Key chaine
+/// @arg {List} $keys - keychain targeting the desired key you want to create
 /// @arg {*} $value - Value to assign
 /// @return {Map} map with the new key and her value
-@function set($map, $keys, $value) {
+@function map-deep-set($map, $keys, $value) {
   $maps: ($map,);
   $result: null;
 
@@ -70,28 +69,26 @@
   // Return result
   @return $result;
 }
-
+/// @alias map-deep-set
 @function S($map, $keys, $value) {
-  @return set($map, $keys, $value);
+  @return map-deep-set($map, $keys, $value);
 }
 
-// | map deep delete ======================================================== \\
+// | map deep remove ======================================================== \\
 
-/// map deep delete
-/// @arg $map {Map}
-/// @arg $keys {Map | List}
-/// @arg $count {number}
-/// @arg $length {number}
-@function delete($map, $keys, $count: 1, $length: false) {
-  @if $length == false {
-    $length: length($keys);
+/// Deep remove function to remove a value in nested maps
+/// @arg {Map} $map - map
+/// @arg {String | List} $keys - keychain to the desired key you want to delete
+/// @return {Map} - map with the key deleted
+@function map-deep-remove($map, $keys) {
+  $count: if(variable-exists(count), $count, 0);
+  $length: if(variable-exists(length), $length, length($keys));
+  @if type-of($map) != map {
+    @error "`#{$map}` is not a map on map-delete,";
   }
   $result: ();
   $new-keys: ();
   @if length($keys) == 1 {
-    @if type-of($map) != map {
-      // @error $map;
-    }
     @return map-remove($map, nth($keys, 1));
   }@else {
     @if length($keys) > 1 {
@@ -105,23 +102,26 @@
       }@else if length($keys) == 1 and $k == nth($keys, 1) and $length == $count{
         $result: map-merge($result, map-remove($v));
       }@else {
-        $result: map-merge($result, ($k: delete($v, $new-keys, $count: $count + 1, $length: $length)));
+        $count: $count + 1;
+        $result: map-merge($result, ($k: map-deep-remove($v, $new-keys)));
+        $count: $count - 1;
       }
     }
   }
   @return $result;
 }
 
-/// @alias delete
-@function D($map, $keys, $count: 1, $length: false) {
-  @return delete($map, $keys, $count, $length);
+/// @alias map-deep-remove
+@function R($map, $keys) {
+  @return map-deep-remove($map, $keys);
 }
 
 // | map sort by value ====================================================== \\
 
-/// map sort by value
-/// @arg $map {map}
-/// @arg $order-by {String} use 'DESC' if you want items to be sort from bigger to lower and 'ASC' for lower to bigger
+/// map sort by value function to sorted a map regarding the numbers values
+/// @arg {Map} $map the map you want to sort by value
+/// @arg {Boolean} $desc use true if you want items to be sort from bigger to lower and false for lower to bigger
+/// @return {Map} - the map sorted regarding the numbers values
 @function map-sort($map, $desc: false) {
   $map-new: ();
   @for $i from 1 through length($map) {
@@ -139,19 +139,23 @@
     }@else {
       $map-new: map-merge($map-new, ($compare-k: $compare-v));
     }
-    $map: D($map, $compare-k);
+    $map: R($map, $compare-k);
   }
   @return $map-new;
 }
 
 // | list delete ============================================================ \\
 
-@function remove($list, $value, $recursive: false) {
+/// List remove function for remove a value within a list
+/// @arg {list} $list - list
+/// @arg {*} $value - value to delete
+/// @return {List} - list with the value deleted
+@function list-remove($list, $value, $recursive: false) {
   $result: ();
 
   @for $i from 1 through length($list) {
     @if type-of(nth($list, $i)) == list and $recursive {
-      $result: append($result, remove(nth($list, $i), $value, $recursive));
+      $result: append($result, list-remove(nth($list, $i), $value, $recursive));
     } @else if nth($list, $i) != $value {
       $result: append($result, nth($list, $i));
     }

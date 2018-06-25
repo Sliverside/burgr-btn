@@ -71,9 +71,9 @@ $burgrs-cache: ();
   $this: $v;
   @if this('parent') {
     $parent: G($burgrs, this('parent'));
-    $parent: D($parent, 'state');
-    $parent: D($parent, 'hover-state');
-    $parent: D($parent, 'active-state');
+    $parent: R($parent, 'state');
+    $parent: R($parent, 'hover-state');
+    $parent: R($parent, 'active-state');
     $burgrs-cache: S($burgrs-cache, $name, map-merge($parent, $this));
   }@else {
     $burgrs-cache: S($burgrs-cache, $name,map-merge($burgr, $this));
