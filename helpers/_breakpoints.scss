@@ -88,12 +88,15 @@ $bpNames: (
 
 // | get breakpoint value =================================================== \\
 
-@function Gbp($var-name, $global: true) {
-  @if type-of($var-name) == list {
+/// function to get the value of a var into a breakpoint map
+/// @arg {String} $key - the key of the value targeted
+/// @arg {Boolean} $default [true] - true, return the defau
+@function Gbp($key, $default: true) {
+  @if type-of($key) == list {
     $result: false;
-    @each $name in $var-name {
+    @each $name in $key {
       @if $result == false {
-        @if G($this, 'values', $name) != null or (G($this, 'global', $name) != null and $global == true) {
+        @if G($this, 'values', $name) != null or (G($this, 'default', $name) != null and $default == true) {
           $result: true;
         }@else {
           $result: false;
@@ -102,38 +105,38 @@ $bpNames: (
     }
     @return $result;
   }@else {
-    @return if(G($this, 'values', $var-name) != null, G($this, 'values', $var-name), if(G($this, 'global', $var-name) != null and $global == true, G($this, 'global', $var-name), null));
+    @return if(G($this, 'values', $key) != null, G($this, 'values', $key), if(G($this, 'default', $key) != null and $default == true, G($this, 'default', $key), null));
   }
 }
 
 // | set breakpoint value =================================================== \\
 
-@function Sbp($var-name, $value) {
+@function Sbp($key, $value) {
   $result: ();
   $breakpoint: ();
-  $global: ();
+  $default: ();
   @if this('breakpoint', 'values') == map {
-    $breakpoint: map-merge(this('breakpoint'), ('values': map-merge(this('breakpoint', 'values'), ($var-name: $value))));
+    $breakpoint: map-merge(this('breakpoint'), ('values': map-merge(this('breakpoint', 'values'), ($key: $value))));
   }@else {
-    $breakpoint: map-merge(this('breakpoint'), ('values': ($var-name: $value)));
+    $breakpoint: map-merge(this('breakpoint'), ('values': ($key: $value)));
   }
 
-  @if this('global') {
-    $global: map-merge(this('global'), ($var-name: $value));
+  @if this('default') {
+    $default: map-merge(this('default'), ($key: $value));
   }
 
   $result: S($this, 'breakpoint', $breakpoint);
-  $result: S($this, 'global', $global);
+  $result: S($this, 'default', $default);
 
   @return $result;
 }
 
 // | add breakpoints vars (loop) ============================================ \\
 
-@function add-bp-vars-loop($breakpoints, $new, $var-name) {
+@function add-bp-vars-loop($breakpoints, $new, $key) {
   $new: map-merge(('max':  false, 'min': false), $new);
   $this: $new !global;
-  $global: if(this('max') == false and this('min') == false, ($var-name: this('value')), null);
+  $default: if(this('max') == false and this('min') == false, ($key: this('value')), null);
   $value: G($new, 'value');
   $new-breakpoint: R($new, 'value');
   $finded: false;
@@ -141,24 +144,24 @@ $bpNames: (
   $temp: ();
   @each $breakpoint in $breakpoints {
     $this: $breakpoint !global;
-    @if this('global') and $global {
-      $global: map-merge(this('global'), $global);
-    }@else if this('global') {
-      $global: this('global');
+    @if this('default') and $default {
+      $default: map-merge(this('default'), $default);
+    }@else if this('default') {
+      $default: this('default');
     }
   }
   @each $breakpoint in $breakpoints {
     $this: $breakpoint !global;
-    $breakpoint: map-merge($breakpoint, ('global': $global));
+    $breakpoint: map-merge($breakpoint, ('default': $default));
     @if this('breakpoint') == $new-breakpoint {
       $finded: true;
-      $breakpoint: map-merge( $breakpoint, ('values': (S(this('values'), $var-name, $value))) );
+      $breakpoint: map-merge( $breakpoint, ('values': (S(this('values'), $key, $value))) );
     }
     $temp: append($temp, $breakpoint);
   }
   $breakpoints: $temp;
   @if $finded == false {
-    $breakpoints: append($breakpoints, ('breakpoint': $new-breakpoint, 'values': ($var-name: $value), 'global': $global));
+    $breakpoints: append($breakpoints, ('breakpoint': $new-breakpoint, 'values': ($key: $value), 'default': $default));
   }
   @return $breakpoints;
 }
@@ -172,16 +175,16 @@ $bpNames: (
       $breakpoints: S($breakpoints, $instance-name, add-bp-vars($instance, $instance-name, false, true));
     }
   }@else {
-    @each $var-name, $properties in $map {
+    @each $key, $properties in $map {
       @if type-of($properties) == map { // if there is only one breakpoint
-        $breakpoints: add-bp-vars-loop($breakpoints, $properties, $var-name);
+        $breakpoints: add-bp-vars-loop($breakpoints, $properties, $key);
       }@else if type-of($properties) == list { // if there is various breakpoints
         @each $breakpoint in $properties {
           $breakpoint: if(type-of($breakpoint) == map, $breakpoint, ('value': $breakpoint));
-          $breakpoints: add-bp-vars-loop($breakpoints,  $breakpoint, $var-name);
+          $breakpoints: add-bp-vars-loop($breakpoints,  $breakpoint, $key);
         }
       }@else { // if there is no breakpoint
-        $breakpoints: add-bp-vars-loop($breakpoints, ('value': $properties,), $var-name);
+        $breakpoints: add-bp-vars-loop($breakpoints, ('value': $properties,), $key);
       }
     }
   }

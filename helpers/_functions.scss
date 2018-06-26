@@ -11,7 +11,7 @@
       @if type-of($map) == map {
         $map: map-get($map, $key);
       }@else {
-        @error type-of($map) ' : is not a map';
+        @error  $map ': is not a map... cache:' $cache 'keys:' $keys 'key:' $key;
       }
     }
     @return $map;

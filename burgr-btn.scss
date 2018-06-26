@@ -2,6 +2,8 @@
 @import "helpers/breakpoints";
 @import "helpers/math";
 
+$prefix: 'burgr' !default;
+
 $burgr-default: (
   'width': 40px, // (px)
   'stroke': 5px, // (px)
@@ -228,6 +230,7 @@ $burgrs: map-merge(('#default#' : $burgr), $burgrs);
   $burgrs-cache: ();
   @each $name, $v in $burgrs {
     $this: $v !global;
+    @if $v == () {@error $name;}
     @if this('parent') {
       $parent: G($burgrs, this('parent'));
       $parent: R($parent, 'state');
@@ -241,8 +244,8 @@ $burgrs: map-merge(('#default#' : $burgr), $burgrs);
   $burgrs: add-bp-vars($burgrs-cache);
   @each $name, $burgr in $burgrs {
     $this: $burgr !global;
-    @if G(nth($this, 1), 'global', 'parent') {
-      $parent-name: G(nth($this, 1), 'global', 'parent');
+    @if G(nth($this, 1), 'default', 'parent') {
+      $parent-name: G(nth($this, 1), 'default', 'parent');
       @if $parent-name == "#default#" {
         $name: '.' + $prefix + '-' + $name;
       }@else {
@@ -305,4 +308,4 @@ $burgrs: map-merge(('#default#' : $burgr), $burgrs);
     }
   }
 }
-@include burgr-gen($burgrs, 'burgr');
+@include burgr-gen($burgrs, $prefix);
