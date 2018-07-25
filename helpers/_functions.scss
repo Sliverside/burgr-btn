@@ -80,14 +80,19 @@
 /// @arg {Map} $map - map
 /// @arg {String | List} $keys - keychain to the desired key you want to delete
 /// @return {Map} - map with the key deleted
-@function map-deep-remove($map, $keys) {
+@function map-deep-remove($map, $keys...) {
+  $keys: ();
+  @each $key in $keys {
+    $keys: append($keys, $key);
+  }
   $count: if(variable-exists(count), $count, 0);
   $length: if(variable-exists(length), $length, length($keys));
   @if type-of($map) != map {
-    @error "`#{$map}` is not a map on map-delete,";
+    @error "`#{$map}` is not a map on map-deep-delete";
   }
   $result: ();
   $new-keys: ();
+  // we just use map-remove() when we remove a first level key
   @if length($keys) == 1 {
     @return map-remove($map, nth($keys, 1));
   }@else {
@@ -112,9 +117,25 @@
 }
 
 /// @alias map-deep-remove
-@function R($map, $keys) {
-  @return map-deep-remove($map, $keys);
+@function R($map, $keys...) {
+  @return map-deep-remove($map, $keys...);
 }
+
+$test: (
+  'test1': 'un',
+  'test2': (
+    'test11': 'onze',
+    'test22': (
+      'test111': 'cent onze',
+      'test222': 'deux-cent vingt-deux',
+      'test333': 'trois-cent trente-trois'
+    ),
+    'test33': 'trente-trois',
+  ),
+  'test3': 'trois',
+);
+
+@error R($test, ('test2', 'test22', 'test222'));
 
 // | map sort by value ====================================================== \\
 
